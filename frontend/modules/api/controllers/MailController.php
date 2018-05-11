@@ -6,16 +6,16 @@
  * Time: 20:54
  */
 
-namespace app\controllers;
+namespace frontend\modules\api\controllers;
 
 
-use app\models\Mail;
+use common\models\Mail;
 use Yii;
 use yii\rest\ActiveController;
 
 class MailController extends ActiveController
 {
-    public $modelClass = "app\models\Mail";
+    public $modelClass = "common\models\Mail";
 
     public function behaviors()
     {
@@ -41,7 +41,8 @@ class MailController extends ActiveController
     public function actions()
     {
         $actions = parent::actions();
-        unset($actions['create'], $actions['delete'], $actions['index']);
+        //unset($actions['create'], $actions['delete'], $actions['index']);
+        unset($actions['create']);
         return $actions;
     }
 
@@ -49,21 +50,32 @@ class MailController extends ActiveController
     {
         $model = new Mail();
         //надо обрабатывать строку с массивом data... так как пишем в бд
-        $innerData = Yii::$app->getRequest()->getBodyParams();
-        if (!$innerData) {
-            Yii::$app->response->setStatusCode(422);
-            return;
-        }
-        if ($innerData['data']) {
-            $innerData['data'] = json_encode($innerData['data'], JSON_PRETTY_PRINT);
-        }
+        $innerData = $this->getFormatingRequest();
 
         if ($model->load($innerData, '') && $model->validate()) {
             $model->save();
             Yii::$app->response->setStatusCode(200);
-            return;
+            return '';
         }
         return $model;
 
+    }
+
+    /**
+     * обработка входящих данных, приведение к нужному виду.
+     * @return array|bool
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function getFormatingRequest()
+    {
+        $innerData = Yii::$app->getRequest()->getBodyParams();
+        if (!$innerData) {
+            Yii::$app->response->setStatusCode(422);
+            return false;
+        }
+        if ($innerData['data']) {
+            $innerData['data'] = json_encode($innerData['data'], JSON_PRETTY_PRINT);
+        }
+        return $innerData;
     }
 }

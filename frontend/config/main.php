@@ -47,13 +47,20 @@ return [
             'rules' => [
                 [
                     'class' => 'yii\rest\UrlRule',
-                    'controller' => 'mail',
+                    'controller' => [
+                        'api/mail',
+                    ],
                     'pluralize' => true //вместо mail -> mails
                 ],
                 '' => 'site/index',
                 'template-crud/<action:\w+>' => 'template-crud/<action>',
                 '<controller:\w+>/<action:\w+>/' => '<controller>/<action>',
             ],
+        ],
+    ],
+    'modules' => [
+        'api' => [
+            'class' => 'frontend\modules\api\Rest',
         ],
     ],
     'params' => $params,
