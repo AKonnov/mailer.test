@@ -10,6 +10,7 @@ use Yii;
  * @property int $id
  * @property string $from
  * @property string $to
+ * @property string $status
  * @property string $template
  * @property string $data
  * @property string $date_added
@@ -17,6 +18,9 @@ use Yii;
  */
 class Mail extends \yii\db\ActiveRecord
 {
+    const STATUS_IN_QUEUE = 0;
+    const STATUS_SEND_OK = 1;
+    const STATUS_SEND_FAIL = 2;
     /**
      * {@inheritdoc}
      */
@@ -33,6 +37,7 @@ class Mail extends \yii\db\ActiveRecord
         return [
             [['from', 'to', 'template'], 'required'],
             [['data'], 'string'],
+            [['status'], 'safe'],
             [['date_added', 'date_modified'], 'safe'],
             [['from', 'to', 'template'], 'string', 'max' => 255],
         ];

@@ -2,10 +2,8 @@
 
 namespace common\models;
 
-use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
-use yii\filters\VerbFilter;
 
 /**
  * This is the model class for table "template".
@@ -25,6 +23,15 @@ class Template extends \yii\db\ActiveRecord
     public static function tableName()
     {
         return 'template';
+    }
+
+    /**
+     * @param string $code
+     * @return null|Template
+     */
+    public static function findByCode($code = '')
+    {
+        return Template::findOne(['code' => $code]);
     }
 
     /**
@@ -68,5 +75,13 @@ class Template extends \yii\db\ActiveRecord
             'subject' => 'Subject',
             'body' => 'Body',
         ];
+    }
+
+    public function isHtml()
+    {
+        if($this->data_type == 'html'){
+            return true;
+        }
+        return false;
     }
 }

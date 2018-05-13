@@ -15,7 +15,9 @@ use yii\rest\ActiveController;
 
 class MailController extends ActiveController
 {
-    public $modelClass = "common\models\Mail";
+    const DELAY_PRIORITY = "1000";
+    const DELAY_TIME = 1; //Default priority
+    public $modelClass = "common\models\Mail"; //Default delay time
 
     public function behaviors()
     {
@@ -50,32 +52,54 @@ class MailController extends ActiveController
     {
         $model = new Mail();
         //надо обрабатывать строку с массивом data... так как пишем в бд
-        $innerData = $this->getFormatingRequest();
+        try {
+            $innerData = $this->getFormattingRequest();
 
-        if ($model->load($innerData, '') && $model->validate()) {
-            $model->save();
-            Yii::$app->response->setStatusCode(200);
-            return '';
+            if ($model->load($innerData, '') && $model->validate()) {
+                $model->status = Mail::STATUS_IN_QUEUE;
+                $model->save();
+                //не забываем передать id так как мы потом для него в бд менять статус будем
+                $innerData['id'] = $model['id'];
+                $this->putMailInQueue(json_encode($innerData, JSON_PRETTY_PRINT));
+                Yii::$app->response->setStatusCode(200);
+                return $model->id;
+            }
+        } catch (\Exception $e) {
+            return Yii::$app->response->setStatusCode(400);
         }
         return $model;
+
 
     }
 
     /**
      * обработка входящих данных, приведение к нужному виду.
-     * @return array|bool
+     * @return array
      * @throws \yii\base\InvalidConfigException
      */
-    public function getFormatingRequest()
+    public function getFormattingRequest()
     {
         $innerData = Yii::$app->getRequest()->getBodyParams();
         if (!$innerData) {
             Yii::$app->response->setStatusCode(422);
-            return false;
+            return [];
         }
         if ($innerData['data']) {
             $innerData['data'] = json_encode($innerData['data'], JSON_PRETTY_PRINT);
         }
         return $innerData;
+    }
+
+    /**
+     *  кладем задачу в очередь. beanstalkd должен быть включен
+     * @param string $data
+     * @return string
+     */
+    public function putMailInQueue($data = '')
+    {
+        if (!$data) {
+            return '';
+        }
+        return Yii::$app->beanstalk->putInTube('tube', $data, self::DELAY_PRIORITY, self::DELAY_TIME);
     }
 }

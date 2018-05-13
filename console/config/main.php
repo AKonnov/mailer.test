@@ -13,23 +13,40 @@ return [
     'controllerNamespace' => 'console\controllers',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
-        '@npm'   => '@vendor/npm-asset',
+        '@npm' => '@vendor/npm-asset',
     ],
     'controllerMap' => [
         'fixture' => [
             'class' => 'yii\console\controllers\FixtureController',
             'namespace' => 'common\fixtures',
-          ],
+        ],
+        'worker' => [
+            'class' => 'console\controllers\WorkerController',
+        ],
     ],
     'components' => [
         'log' => [
+            'traceLevel' => 0,
+            'flushInterval' => 1,
             'targets' => [
-                [
+                'file' => [
                     'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning'],
+                    'levels' => ['error', 'warning', 'info'],
+                    'exportInterval' => 1, // <-- and here
+                    'logFile' => '@console/runtime/logs/console.log',
+                    'logVars' => []
+                ],
+                [
+                    'class' => 'yii\log\FileTarget', //в файл
+                    'levels' => ['info'],
+                    'exportInterval' => 1, // <-- and here
+                    'categories' => ['mails'], //категория логов
+                    'logFile' => '@console/runtime/logs/mails.log', //куда сохранять
+                    'logVars' => [] //не добавлять в лог глобальные переменные ($_SERVER, $_SESSION...)
                 ],
             ],
         ],
+
     ],
     'params' => $params,
 ];
