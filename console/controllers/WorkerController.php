@@ -7,9 +7,7 @@ use common\models\Template;
 use Pheanstalk\Job;
 use udokmeci\yii2beanstalk\BeanstalkController;
 use Yii;
-use yii\base\Module;
 use yii\helpers\StringHelper;
-use yii\log\Logger;
 
 
 /**
@@ -21,14 +19,7 @@ class WorkerController extends BeanstalkController
 {
     const DELAY_PRIORITY = "1000"; //Default priority
     const DELAY_TIME = 5; //Default delay time
-    const DELAY_MAX = 3;
-    private $_log;
 
-    public function __construct($id, Module $module, array $config = [])
-    {
-        $this->_log = new Logger();
-        parent::__construct($id, $module, $config);
-    }
 
     /**
      * список workers для задач
@@ -37,11 +28,6 @@ class WorkerController extends BeanstalkController
     public function listenTubes()
     {
         return ["tube"];
-    }
-
-    public function actionTest()
-    {
-        Yii::info('start', 'mails');
     }
 
     /**
