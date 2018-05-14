@@ -59,6 +59,7 @@ class Template extends \yii\db\ActiveRecord
             [['modified_at'], 'safe'],
             [['data_type', 'body'], 'string'],
             [['code', 'subject'], 'string', 'max' => 255],
+            [['code'], 'unique'],
         ];
     }
 
