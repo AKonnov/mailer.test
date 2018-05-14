@@ -20,7 +20,8 @@ body (обязательный, текст).
 **Пример запроса типа POST для добавления письма:**
 
 POST http://DOMAINNAME/api/mails
-с объектом json 
+с объектом json
+```json
 {
 "from" : "\"Our service\" <service@example.com>",
 "to": "\"Иван Сидоров\" <ivan@example.com>",
@@ -36,6 +37,7 @@ POST http://DOMAINNAME/api/mails
 	"date_modified": null
 	}
 }
+```
 
 POST API возвращает id письма 
 
