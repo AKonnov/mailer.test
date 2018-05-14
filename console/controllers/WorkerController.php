@@ -11,11 +11,6 @@ use yii\base\Module;
 use yii\helpers\StringHelper;
 use yii\log\Logger;
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-ini_set("log_errors", 1);
-ini_set("error_log", "/var/www/mail.test/php-error.log");
 
 /**
  * Created by PhpStorm. * User: olaff
@@ -157,29 +152,4 @@ class WorkerController extends BeanstalkController
         $mail->setTextBody($emailData['text']);
         return $mail->send();
     }
-
-    /*public function actionSendMail()
-    {
-        $isHtml = true;
-        $emailData = array(
-            'to' => 'a.konnov73@bk.ru',
-            'from' => 'a.konnov73@bk.ru',
-            'subject' => 'test',
-            'body' => 'test',
-            'text' => 'test',
-        );
-
-        $mail = Yii::$app->mailer->compose();
-        $mail->setFrom([$emailData['from'] => $emailData['from']]);
-        $mail->setTo([$emailData['from'] => $emailData['from']]);
-        //var_dump($mail);
-        $mail->setSubject($emailData['subject']);
-        if ($isHtml) {
-            $mail->setHtmlBody($emailData['body']);
-        }
-        $mail->setTextBody($emailData['text']);
-
-        $result = $mail->send();
-        var_dump($result);
-    }*/
 }
